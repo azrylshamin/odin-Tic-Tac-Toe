@@ -73,14 +73,67 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
     };
 
     const playRound = (row, column) => {
-        console.log(`Placing ${getActivePlayer().name}'s mark on the grid ${row}, ${column}...`);
+        console.log(`Placing ${getActivePlayer().name}'s mark on the cell ${row}, ${column}...`);
         board.placeMark(row, column, getActivePlayer().mark);
 
         /*  This is where we would check for a winner and handle that logic,
             such as a win message. */
 
-            // TODO: Winning condition (If the newly put mark is on the corner, check x, y and diagonal winning conds but if somewhere else, check x and y only)
+        const horizontalWinningCondition = (cellRow, player) => {
+            const playerRowMarks = board[cellRow].filter(cell => cell === player);
 
+            if (playerRowMarks.length === 3) {
+                return true;
+            }
+
+            return false;
+        }
+
+        const verticalWinningCondition = (cellColumn, player) => {
+            const playerColumnMarks = board.filter((cellRow) => cellRow[cellColumn].getValue() === player).map(row => row[cellColumn]);
+
+            if (playerColumnMarks.length === 3) {
+                return true;
+            }
+
+            return false;
+        }
+
+        const diagonalWinningCondition = (cellRow, cellColumn, player) => {
+            if ((cellRow === 0 && cellColumn === 0) || (cellRow === 2 && cellColumn === 2)) {
+                if(
+                    board[0][0] === player
+                    && board[1][1] === player
+                    && board[2][2] === player
+                ) return true;
+            }
+
+            if ((cellRow === 0 && cellColumn === 2) || (cellRow === 2 && cellColumn === 0)) {
+                if(
+                    board[0][2] === player
+                    && board[1][1] === player
+                    && board[2][0] === player
+                ) return true;
+            }
+
+            if (cellRow === 1 && cellColumn === 1) {
+                if(
+                    (board[0][0] === player
+                    && board[1][1] === player
+                    && board[2][2] === player) 
+                    || (board[0][2] === player
+                    && board[1][1] === player
+                    && board[2][0] === player)
+                ) return true;
+            }
+
+        }
+
+
+        if (horizontalWinningCondition(row, getActivePlayer().mark) || verticalWinningCondition(column, getActivePlayer().mark) || diagonalWinningCondition(row, column, getActivePlayer().mark)) {
+            console.log(`${getActivePlayer()} wins the game, thanks for playing!`);
+            return;
+        }
 
         // Switch player turn
         switchPlayerTurn();
