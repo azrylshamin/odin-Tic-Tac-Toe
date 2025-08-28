@@ -102,7 +102,7 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
 
         const diagonalWinningCondition = (cellRow, cellColumn, player) => {
             if ((cellRow === 0 && cellColumn === 0) || (cellRow === 2 && cellColumn === 2)) {
-                if(
+                if (
                     boardArray[0][0].getValue() === player
                     && boardArray[1][1].getValue() === player
                     && boardArray[2][2].getValue() === player
@@ -110,7 +110,7 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
             }
 
             if ((cellRow === 0 && cellColumn === 2) || (cellRow === 2 && cellColumn === 0)) {
-                if(
+                if (
                     boardArray[0][2].getValue() === player
                     && boardArray[1][1].getValue() === player
                     && boardArray[2][0].getValue() === player
@@ -118,22 +118,33 @@ function GameController(playerOneName = "Player One", playerTwoName = "Player Tw
             }
 
             if (cellRow === 1 && cellColumn === 1) {
-                if(
+                if (
                     (boardArray[0][0].getValue() === player
-                    && boardArray[1][1].getValue() === player
-                    && boardArray[2][2].getValue() === player) 
+                        && boardArray[1][1].getValue() === player
+                        && boardArray[2][2].getValue() === player)
                     || (boardArray[0][2].getValue() === player
-                    && boardArray[1][1].getValue() === player
-                    && boardArray[2][0].getValue() === player)
+                        && boardArray[1][1].getValue() === player
+                        && boardArray[2][0].getValue() === player)
                 ) return true;
             }
 
             return false;
         }
 
+        const isBoardFull = () => {
+            const boardValues = boardArray.map(row => row.map(cell => cell.getValue()));
+            return boardValues.flat().every(cell => cell !== ' ');
+        };
+
 
         if (horizontalWinningCondition(row, getActivePlayer().mark) || verticalWinningCondition(column, getActivePlayer().mark) || diagonalWinningCondition(row, column, getActivePlayer().mark)) {
             console.log(`${getActivePlayer().name} wins the game, thanks for playing!`);
+            return;
+        }
+
+        if (isBoardFull()) {
+            board.printBoard();
+            console.log("It's a tie!");
             return;
         }
 
